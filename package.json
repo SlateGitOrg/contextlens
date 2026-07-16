@@ -1,7 +1,7 @@
 {
   "name": "contextlens",
   "displayName": "ContextLens",
-  "description": "Hover over any line to see who wrote it, why, and the PR discussion behind it — without leaving your editor.",
+  "description": "Hover over any line to see who wrote it, why, and the PR discussion behind it \u2014 without leaving your editor.",
   "version": "0.1.0",
   "publisher": "contextlens-dev",
   "engines": {
@@ -82,5 +82,13 @@
   },
   "dependencies": {
     "sql.js": "^1.10.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SlateGitOrg/contextlens.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SlateGitOrg/contextlens/issues"
+  },
+  "homepage": "https://github.com/SlateGitOrg/contextlens#readme"
 }
