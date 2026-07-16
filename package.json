@@ -1,0 +1,86 @@
+{
+  "name": "contextlens",
+  "displayName": "ContextLens",
+  "description": "Hover over any line to see who wrote it, why, and the PR discussion behind it — without leaving your editor.",
+  "version": "0.1.0",
+  "publisher": "contextlens-dev",
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=18"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "contextlens.reindexRepository",
+        "title": "ContextLens: Re-index Repository"
+      },
+      {
+        "command": "contextlens.openSettings",
+        "title": "ContextLens: Open Settings"
+      },
+      {
+        "command": "contextlens.clearCache",
+        "title": "ContextLens: Clear Local Cache"
+      }
+    ],
+    "configuration": {
+      "title": "ContextLens",
+      "properties": {
+        "contextlens.githubToken": {
+          "type": "string",
+          "default": "",
+          "description": "GitHub Personal Access Token (repo:read scope) used to fetch PR descriptions and comments. Stored in VS Code SecretStorage, not settings, once entered via the settings panel."
+        },
+        "contextlens.maxCommentsPerHover": {
+          "type": "number",
+          "default": 3,
+          "description": "Maximum number of ranked PR comments to show in a hover card."
+        },
+        "contextlens.blameLineLimit": {
+          "type": "number",
+          "default": 4000,
+          "description": "Skip blame indexing for files larger than this many lines."
+        },
+        "contextlens.cacheTtlHours": {
+          "type": "number",
+          "default": 168,
+          "description": "Hours before a cached PR/comment record is considered stale and re-fetched."
+        },
+        "contextlens.showCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show 'Last touched by...' CodeLens annotations above functions and classes."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p ./",
+    "watch": "tsc -w -p ./",
+    "package": "vsce package",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src test --ext .ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/sql.js": "^1.4.11",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vscode/vsce": "^2.32.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "sql.js": "^1.10.3"
+  }
+}
