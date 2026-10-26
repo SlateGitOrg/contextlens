@@ -4,11 +4,21 @@
 
 **Hover over any line of code and see who wrote it, why, and what the PR discussion actually said — without leaving your editor.**
 
-## The problem
+## Why
 
 The reasoning behind a tricky line of code almost never lives next to that line. It lives in a PR description someone wrote six months ago, or buried on page three of a review thread, or in a Slack message nobody can find anymore. So engineers re-derive the same "why is this here?" question over and over — during onboarding, during code review, during an incident at 2am — burning time that the original author already spent explaining once. `git blame` gets you a commit hash and a one-line summary; it doesn't get you the actual conversation.
 
 ContextLens closes that gap. It blames the line, follows the commit to the pull request that introduced it, fetches that PR's description and top comments from GitHub, ranks them by how explanatory they actually are, and surfaces all of it in a hover card — cached locally so it's instant on every subsequent look.
+
+## Features
+
+- Hover any line to see its blame chain, newest first, with the PR that introduced it.
+- PR description plus the top-ranked comments, scored by how well they explain the change.
+- Local SQLite cache (`sql.js`, no native build) so repeat hovers are instant and work offline.
+- Rate-limit-aware GitHub client with `Retry-After` and exponential backoff handling.
+- Background indexer that pre-warms the cache on repo open, with cancellable progress UI.
+- GitHub token stored in VS Code `SecretStorage`, never in `settings.json`.
+- Optional CodeLens annotations ("Last touched by...") above functions and classes.
 
 ## Architecture
 
@@ -113,6 +123,32 @@ Everything above runs fully offline: no GitHub token, no Docker daemon, no netwo
 - `ContextLens: Re-index Repository` — runs the background indexer on demand with progress UI.
 - `ContextLens: Open Settings` — opens the token-entry webview.
 - `ContextLens: Clear Local Cache` — wipes the SQLite cache.
+
+## Project layout
+
+```
+src/
+  extension.ts          activation, commands, wiring
+  hoverProvider.ts      hover card
+  codeLensProvider.ts   CodeLens annotations
+  contextService.ts     blame -> cache -> GitHub orchestration
+  gitRunner.ts          git process execution
+  gitBlame.ts           blame porcelain parser
+  gitLogParser.ts       log parser, PR reference extraction
+  githubClient.ts       GitHub API client with rate-limit handling
+  commentRanking.ts     comment scoring heuristic
+  sqliteCache.ts        sql.js-backed cache
+  indexer.ts            background indexing pass
+  settingsPanel.ts      token-entry webview
+test/                   vitest unit and real-git integration tests
+```
+
+## Limitations
+
+- PR lookup relies on PR numbers in commit subjects (merge commits and the `(#123)` squash convention); rebased or hand-edited subjects are not resolved.
+- Only GitHub-hosted remotes are supported.
+- Comment ranking is a heuristic, not a model; it can misorder borderline comments.
+- Without a token, only local blame information is shown, and unauthenticated GitHub rate limits are low.
 
 ## License
 
